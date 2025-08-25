@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>S_WarpChroma Simulation</title>
+  <style>
+    body {
+      background: #111;
+      color: #fff;
+      text-align: center;
+      font-family: Arial;
+    }
+    .video-wrapper {
+      position: relative;
+      display: inline-block;
+      margin: 20px;
+    }
+    video {
+      max-width: 70%;
+      display: block;
+    }
+    .rgb-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      mix-blend-mode: screen;
+      opacity: 0.7;
+    }
+    .controls {
+      margin-top: 20px;
+    }
+    input[type=range] {
+      width: 200px;
+    }
+  </style>
+</head>
+<body>
+  <h1>S_WarpChroma Effect Simulation</h1>
+  <input type="file" id="videoInput" accept="video/*"><br><br>
+
+  <div class="video-wrapper">
+    <video id="baseVideo" autoplay loop muted></video>
+    <video id="redLayer" class="rgb-layer" autoplay loop muted></video>
+    <video id="greenLayer" class="rgb-layer" autoplay loop muted></video>
+    <video id="blueLayer" class="rgb-layer" autoplay loop muted></video>
+  </div>
+
+  <div class="controls">
+    <label>Chroma Amount:
+      <input type="range" id="chroma" min="0" max="50" value="10">
+    </label>
+    <button onclick="toggleEffect()">Toggle Effect</button>
+  </div>
+
+  <script>
+    const baseVideo = document.getElementById('baseVideo');
+    const redLayer = document.getElementById('redLayer');
+    const greenLayer = document.getElementById('greenLayer');
+    const blueLayer = document.getElementById('blueLayer');
+    const input = document.getElementById('videoInput');
+    const chroma = document.getElementById('chroma');
+
+    let effectOn = true;
+
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        [baseVideo, redLayer, greenLayer, blueLayer].forEach(v => v.src = url);
+      }
+    };
+
+    function applyEffect() {
+      if (!effectOn) {
+        [redLayer, greenLayer, blueLayer].forEach(v => v.style.transform = 'none');
+        return;
+      }
+      const amount = chroma.value;
+      redLayer.style.transform = `translate(${amount}px, ${amount}px)`;
+      greenLayer.style.transform = `translate(${-amount}px, ${amount}px)`;
+      blueLayer.style.transform = `translate(${amount}px, ${-amount}px)`;
+    }
+
+    chroma.oninput = applyEffect;
+
+    function toggleEffect() {
+      effectOn = !effectOn;
+      applyEffect();
+    }
+
+    applyEffect();
+  </script>
+</body>
+</html>
