@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>S_Trails Simulation</title>
+  <style>
+    body {
+      background: #111;
+      color: #fff;
+      text-align: center;
+      font-family: Arial;
+    }
+    canvas {
+      display: block;
+      margin: 20px auto;
+      background: black;
+    }
+    .controls {
+      margin-top: 20px;
+    }
+    input[type=range] {
+      width: 200px;
+      margin: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>S_Trails Effect Simulation</h1>
+  <input type="file" id="videoInput" accept="video/*"><br><br>
+  <canvas id="trailCanvas" width="640" height="360"></canvas>
+
+  <div class="controls">
+    Trail Opacity:
+    <input type="range" id="opacity" min="0" max="1" step="0.01" value="0.1"><br>
+    <button onclick="toggleTrails()">Toggle Trails</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('trailCanvas');
+    const ctx = canvas.getContext('2d');
+    const input = document.getElementById('videoInput');
+    const opacityControl = document.getElementById('opacity');
+    let video = document.createElement('video');
+    let trailsOn = true;
+
+    video.autoplay = true;
+    video.loop = true;
+    video.muted = true;
+
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        video.src = URL.createObjectURL(file);
+        video.play();
+      }
+    };
+
+    function draw() {
+      requestAnimationFrame(draw);
+
+      if (video.readyState >= 2) {
+        if (trailsOn) {
+          ctx.fillStyle = `rgba(0, 0, 0, ${1 - opacityControl.value})`;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    function toggleTrails() {
+      trailsOn = !trailsOn;
+    }
+
+    draw();
+  </script>
+</body>
+</html>
