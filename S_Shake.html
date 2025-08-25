@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>S_Shake Effect Simulation</title>
+  <style>
+    body {
+      background: #111;
+      color: #fff;
+      text-align: center;
+      font-family: Arial;
+    }
+    video {
+      max-width: 80%;
+      display: block;
+      margin: 20px auto;
+      border: 4px solid #fff;
+      transform-origin: center;
+      position: relative;
+    }
+    .controls input {
+      width: 200px;
+      margin: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>S_Shake Simulation in HTML</h1>
+  <input type="file" id="videoInput" accept="video/*"><br>
+  <video id="video" controls></video>
+
+  <div class="controls">
+    <label>Amplitude: <input type="range" id="amp" min="0" max="50" value="10"></label>
+    <label>Frequency: <input type="range" id="freq" min="1" max="60" value="20"></label>
+    <button onclick="startShake()">Start Shake</button>
+    <button onclick="stopShake()">Stop</button>
+  </div>
+
+  <script>
+    const video = document.getElementById('video');
+    const input = document.getElementById('videoInput');
+    let shakeInterval;
+
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) video.src = URL.createObjectURL(file);
+    };
+
+    function startShake() {
+      const amp = parseFloat(document.getElementById('amp').value);
+      const freq = parseFloat(document.getElementById('freq').value);
+      if (shakeInterval) clearInterval(shakeInterval);
+
+      shakeInterval = setInterval(() => {
+        const x = (Math.random() - 0.5) * amp;
+        const y = (Math.random() - 0.5) * amp;
+        const r = (Math.random() - 0.5) * (amp / 2);
+        video.style.transform = `translate(${x}px, ${y}px) rotate(${r}deg)`;
+      }, 1000 / freq);
+    }
+
+    function stopShake() {
+      clearInterval(shakeInterval);
+      video.style.transform = 'none';
+    }
+  </script>
+</body>
+</html>
