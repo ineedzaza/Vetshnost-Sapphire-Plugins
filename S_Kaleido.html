@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S_Kaleido Simulation</title>
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  canvas {
+    border: 4px solid white;
+  }
+  .controls {
+    position: fixed;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    color: white;
+    background: rgba(0,0,0,0.6);
+    padding: 10px;
+  }
+  input[type=range] {
+    width: 150px;
+    margin: 0 10px;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="kaleidoCanvas" width="640" height="360"></canvas>
+
+<div class="controls">
+  <input type="file" id="videoInput" accept="video/*"><br>
+  Segments: <input type="range" id="segments" min="2" max="16" value="6">
+</div>
+
+<script>
+const canvas = document.getElementById('kaleidoCanvas');
+const ctx = canvas.getContext('2d');
+const videoInput = document.getElementById('videoInput');
+const segmentsInput = document.getElementById('segments');
+
+const video = document.createElement('video');
+video.autoplay = true;
+video.loop = true;
+video.muted = true;
+
+videoInput.onchange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    video.src = URL.createObjectURL(file);
+  }
+};
+
+function drawKaleido() {
+  const seg = parseInt(segmentsInput.value);
+  const w = canvas.width;
+  const h = canvas.height;
+  const cx = w / 2;
+  const cy = h / 2;
+
+  ctx.clearRect(0, 0, w, h);
+
+  for (let i = 0; i < seg; i++) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate((i * 2 * Math.PI) / seg);
+    ctx.scale(1, i % 2 === 0 ? 1 : -1); // mirror every other segment
+    ctx.drawImage(video, -cx, -cy, w, h);
+    ctx.restore();
+  }
+
+  requestAnimationFrame(drawKaleido);
+}
+
+drawKaleido();
+</script>
+
+</body>
+</html>
