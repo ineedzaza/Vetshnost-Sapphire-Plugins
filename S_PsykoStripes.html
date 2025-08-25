@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>S_PsykoStripes Simulation</title>
+  <style>
+    body {
+      background: #111;
+      color: #fff;
+      text-align: center;
+      font-family: Arial;
+      margin: 0;
+      overflow: hidden;
+    }
+    .container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    video {
+      width: 80%;
+      border: 4px solid #fff;
+    }
+    .stripes {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        45deg,
+        red,
+        orange 20px,
+        yellow 40px,
+        green 60px,
+        blue 80px,
+        violet 100px
+      );
+      mix-blend-mode: overlay;
+      opacity: 0.6;
+      animation: moveStripes 2s linear infinite, hueCycle 5s linear infinite;
+    }
+    @keyframes moveStripes {
+      0% { background-position: 0 0; }
+      100% { background-position: 200px 200px; }
+    }
+    @keyframes hueCycle {
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+    .controls {
+      position: fixed;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      background: rgba(0,0,0,0.6);
+      padding: 10px;
+    }
+    input[type=range] {
+      width: 200px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <video id="video" autoplay loop muted></video>
+    <div class="stripes" id="stripes"></div>
+  </div>
+
+  <div class="controls">
+    <input type="file" id="videoInput" accept="video/*"><br>
+    Stripe Speed: <input type="range" id="speed" min="1" max="20" value="2"><br>
+    Opacity: <input type="range" id="opacity" min="0" max="1" step="0.01" value="0.6">
+  </div>
+
+  <script>
+    const video = document.getElementById('video');
+    const stripes = document.getElementById('stripes');
+    const input = document.getElementById('videoInput');
+    const speed = document.getElementById('speed');
+    const opacity = document.getElementById('opacity');
+
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        video.src = URL.createObjectURL(file);
+      }
+    };
+
+    speed.oninput = () => {
+      stripes.style.animationDuration = `${speed.value}s, 5s`;
+    };
+
+    opacity.oninput = () => {
+      stripes.style.opacity = opacity.value;
+    };
+  </script>
+</body>
+</html>
